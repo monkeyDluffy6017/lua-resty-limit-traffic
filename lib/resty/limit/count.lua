@@ -77,7 +77,7 @@ local function incoming_new(self, key, commit, cost)
 end
 
 -- incoming function using incr and expire
-local function incoming_old(self, key, commit, cost)
+local function incoming_old(self, key, commit)
     local dict = self.dict
     local limit = self.limit
     local window = self.window

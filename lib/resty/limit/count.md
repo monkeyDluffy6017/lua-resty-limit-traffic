@@ -113,7 +113,7 @@ This method takes the following arguments:
 
 incoming
 --------
-**syntax:** `delay, err = obj:incoming(key, commit)`
+**syntax:** `delay, err = obj:incoming(key, commit, cost)`
 
 Fires a new request incoming event and calculates the delay needed (if any) for the current request
 upon the specified key or whether the user should reject it immediately.
@@ -129,6 +129,8 @@ key so that we can set a rate for individual user.
     Please note that this module does not prefix nor suffix the user key so it is the user's responsibility to ensure the key is unique in the `lua_shared_dict` shm zone).
 * `commit` is a boolean value. If set to `true`, the object will actually record the event
 in the shm zone backing the current object; otherwise it would just be a "dry run" (which is the default).
+
+* `cost` is the specified number that should be deducted when a new request arrives.
 
 The return values depend on the following cases:
 
