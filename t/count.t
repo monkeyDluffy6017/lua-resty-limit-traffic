@@ -232,3 +232,39 @@ remaining: 1
 --- no_error_log
 [error]
 [lua]
+
+
+
+=== TEST 6: specify a cost
+--- http_config eval: $::HttpConfig
+--- config
+    location = /t {
+        content_by_lua_block {
+            local limit_count = require "resty.limit.count"
+            ngx.shared.store:flush_all()
+            local lim = limit_count.new("store", 10, 100)
+            local uri = ngx.var.uri
+            for i = 1, 7 do
+                local delay, err = lim:incoming(uri, true, 2)
+                if not delay then
+                    ngx.say(err)
+                else
+                    local remaining = err
+                    ngx.say("remaining: ", remaining)
+                end
+            end
+        }
+    }
+--- request
+    GET /t
+--- response_body
+remaining: 8
+remaining: 6
+remaining: 4
+remaining: 2
+remaining: 0
+rejected
+rejected
+--- no_error_log
+[error]
+[lua]
