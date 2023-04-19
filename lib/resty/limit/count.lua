@@ -46,7 +46,11 @@ end
 
 -- incoming function using incr with init_ttl
 -- need OpenResty version > v0.10.12rc2
-local function incoming_new(self, key, commit)
+-- parameter "cost" is only supported on the new interface
+local function incoming_new(self, key, commit, cost)
+    cost = cost or 1
+    assert(cost >= 1)
+
     local dict = self.dict
     local limit = self.limit
     local window = self.window
@@ -54,12 +58,12 @@ local function incoming_new(self, key, commit)
     local remaining, ok, err
 
     if commit then
-        remaining, err = dict:incr(key, -1, limit, window)
+        remaining, err = dict:incr(key, -cost, limit, window)
         if not remaining then
             return nil, err
         end
     else
-        remaining = (dict:get(key) or limit) - 1
+        remaining = (dict:get(key) or limit) - cost
     end
 
     if remaining < 0 then
@@ -74,7 +78,6 @@ local function incoming_old(self, key, commit)
     local dict = self.dict
     local limit = self.limit
     local window = self.window
-
     local remaining, ok, err
 
     if commit then
