@@ -48,10 +48,7 @@ end
 -- need OpenResty version > v0.10.12rc2
 -- parameter "cost" is only supported on the new interface
 local function incoming_new(self, key, commit, cost)
-    if not cost then
-        cost = 1
-    end
-
+    cost = cost or 1
     assert(cost >= 1)
 
     local dict = self.dict
